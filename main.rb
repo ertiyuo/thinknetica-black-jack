@@ -1,6 +1,7 @@
 # frozen_string_literal: false
 
 Dir["#{File.dirname(__FILE__)}/lib/**/*.rb"].each { |f| load(f) }
+actions = Actions.new
 
 print 'What is your name? '
 username = gets.chomp
@@ -9,10 +10,21 @@ puts "Welcome to Black Jack, #{username}!"
 loop do
   puts
 
-  puts 'user gets 2 cards'
-  puts 'dealer gets 2 cards'
+  puts "you get #{Cards::SPADES[5]} #{Cards::DIAMONDS[8]} - 15 points"
+  puts "dealer gets #{Cards::HIDDEN_CARD} #{Cards::HIDDEN_CARD}"
 
-  puts 'game on'
+  print "\nwhat do you wanna do:\n"
+  actions.actions.each { |key, action| puts "#{key} - to #{action}" }
+  actions.send gets.chomp.to_sym
+
+  print "\nwhat do you wanna do:\n"
+  actions.actions.each { |key, action| puts "#{key} - to #{action}" }
+  actions.send gets.chomp.to_sym
+
+  print "\nwhat do you wanna do:\n"
+  actions.actions.each { |key, action| puts "#{key} - to #{action}" }
+  actions.send gets.chomp.to_sym
+
   puts 'endgame'
 
   print "\nOne more game? Yes to play, anything else to leave - "
