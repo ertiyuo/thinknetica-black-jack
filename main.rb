@@ -1,31 +1,25 @@
 # frozen_string_literal: false
 
-Dir["#{File.dirname(__FILE__)}/lib/**/*.rb"].each { |f| load(f) }
-actions = Actions.new
+require_relative 'lib/game'
 
 print 'What is your name? '
 username = gets.chomp
 puts "Welcome to Black Jack, #{username}!"
+puts
 
 loop do
+  dealer = Dealer.new
+  player = Player.new(username)
+  game = Game.new(dealer, player)
+
+  puts 'Players:'
+  game.players.each { |pl| puts pl.name.to_s }
+  puts 'Game on!'
+  puts "BANK : #{game.bank}"
   puts
 
-  puts "you get #{Deck::SPADES[5]} #{Deck::DIAMONDS[8]} - 15 points"
-  puts "dealer gets #{Deck::HIDDEN_CARD} #{Deck::HIDDEN_CARD}"
-
-  print "\nwhat do you wanna do:\n"
-  actions.actions.each { |key, action| puts "#{key} - to #{action}" }
-  actions.send gets.chomp.to_sym
-
-  print "\nwhat do you wanna do:\n"
-  actions.actions.each { |key, action| puts "#{key} - to #{action}" }
-  actions.send gets.chomp.to_sym
-
-  print "\nwhat do you wanna do:\n"
-  actions.actions.each { |key, action| puts "#{key} - to #{action}" }
-  actions.send gets.chomp.to_sym
-
-  puts 'endgame'
+  2.times { game.give_card(player) }
+  2.times { game.give_card(dealer, face_down: true) }
 
   print "\nOne more game? Yes to play, anything else to leave - "
   answer = gets.chomp.to_sym
@@ -36,4 +30,5 @@ loop do
   end
 
   puts 'New game!'
+  puts
 end
