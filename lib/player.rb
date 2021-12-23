@@ -39,6 +39,6 @@ class Player
   end
 
   def count_cards
-    puts 'cards count'
+    cards.sum(&:value)
   end
 end

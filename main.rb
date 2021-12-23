@@ -21,6 +21,8 @@ loop do
   2.times { game.give_card(player) }
   2.times { game.give_card(dealer, face_down: true) }
 
+  puts "Player #{player.name} has #{player.count_cards} points"
+
   print "\nOne more game? Yes to play, anything else to leave - "
   answer = gets.chomp.to_sym
 
