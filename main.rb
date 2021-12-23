@@ -10,8 +10,8 @@ puts "Welcome to Black Jack, #{username}!"
 loop do
   puts
 
-  puts "you get #{Cards::SPADES[5]} #{Cards::DIAMONDS[8]} - 15 points"
-  puts "dealer gets #{Cards::HIDDEN_CARD} #{Cards::HIDDEN_CARD}"
+  puts "you get #{Deck::SPADES[5]} #{Deck::DIAMONDS[8]} - 15 points"
+  puts "dealer gets #{Deck::HIDDEN_CARD} #{Deck::HIDDEN_CARD}"
 
   print "\nwhat do you wanna do:\n"
   actions.actions.each { |key, action| puts "#{key} - to #{action}" }
