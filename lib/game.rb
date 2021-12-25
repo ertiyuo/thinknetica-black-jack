@@ -19,6 +19,6 @@ class Game
     card = deck.next_card
     player.get_card(card)
 
-    puts "player #{player.name} gets #{face_down ? card.back : card.front}"
+    puts "player #{player.name} gets #{face_down ? card.back : card.value}"
   end
 end

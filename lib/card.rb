@@ -1,16 +1,11 @@
 class Card
   BACK = "\u{1F0A0}".freeze
 
-  def initialize(card)
-    @value = card
-  end
+  attr_reader :value, :points
 
-  def value
-    @value.ord
-  end
-
-  def front
-    @value
+  def initialize(value, points)
+    @value = value
+    @points = points
   end
 
   def back

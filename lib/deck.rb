@@ -12,13 +12,15 @@ class Deck
 
   def initialize
     @cards = []
-    (SPADES + HEARTS + DIAMONDS + CLUBS).each { |card| @cards << Card.new(card) }
+    SPADES.zip(HEARTS, DIAMONDS, CLUBS).each_with_index do |cards, index|
+      cards.each { |card| @cards << Card.new(card, index < 10 ? index + 1 : 10) }
+    end
 
-    @cards.shuffle
+    shuffle
   end
 
   def shuffle
-    @cards.shuffle
+    @cards.shuffle!
   end
 
   def next_card
