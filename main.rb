@@ -18,15 +18,26 @@ loop do
   puts "BANK : #{game.bank}"
   puts
 
-  2.times { game.give_card(player) }
-  2.times { game.give_card(dealer, face_down: true) }
+  puts 'You get: '
+  2.times { puts player.get_card(game.draw_card) }
+  puts 'Dealer gets: '
+  2.times { puts dealer.get_card(game.draw_card, face_down: true) }
+  puts
 
-  puts "Player #{player.name} has #{player.count_cards} points"
+  bet = 10
+  game.place_a_bet(player.bet(bet))
+  game.place_a_bet(dealer.bet(bet))
+  puts "Player : #{player.money}"
+  puts "Dealer : #{dealer.money}"
+  puts "BANK : #{game.bank}"
+  puts
 
-  print "\nOne more game? Yes to play, anything else to leave - "
+  puts "You have #{player.count_cards} points. What do you want to do next?"
+
+  print "\nOne more game? Q/q to exit, anything else to play - "
   answer = gets.chomp.to_sym
 
-  if answer != :yes
+  if %i[q Q].include?(answer)
     puts 'Good bye and come back!'
     break
   end

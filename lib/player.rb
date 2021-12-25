@@ -15,12 +15,16 @@ class Player
     @cards = []
   end
 
-  def place_a_bet
-    @money -= 10
+  def bet(bet)
+    @money -= bet
+
+    bet
   end
 
-  def get_card(card)
+  def get_card(card, face_down: false)
     cards << card
+
+    face_down ? card.back : card.value
   end
 
   def card

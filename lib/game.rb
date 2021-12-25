@@ -15,10 +15,7 @@ class Game
     @bank += bet
   end
 
-  def give_card(player, face_down: false)
-    card = deck.next_card
-    player.get_card(card)
-
-    puts "player #{player.name} gets #{face_down ? card.back : card.value}"
+  def draw_card
+    deck.next_card
   end
 end
