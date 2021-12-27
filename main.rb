@@ -19,8 +19,8 @@ loop do
   puts
 
   # initial cards
-  2.times { player.get_card(game.draw_card) }
-  2.times { dealer.get_card(game.draw_card, face_down: true) }
+  2.times { player.get_card(game.draw_card, face_up: true) }
+  2.times { dealer.get_card(game.draw_card) }
   puts
 
   # betting
@@ -32,14 +32,36 @@ loop do
   puts "BANK : #{game.bank}"
   puts
 
+  # 1st round
   player.list_points
+  puts
 
   # user action
-  puts 'What do you want to do next?'
+  puts 'What next?'
   player.list_available_actions
   player.send gets.chomp.to_sym, game.draw_card
-
   player.list_points
+  puts
+
+  # dealer action
+  dealer.choose_action(game)
+  puts
+
+  # 2nd round
+
+  # user action
+  puts 'What next?'
+  player.list_available_actions
+  player.send gets.chomp.to_sym, game.draw_card
+  puts
+
+  # dealer action
+  dealer.choose_action(game)
+  puts
+
+  # turn over
+  player.open
+  dealer.open
 
   print "\nOne more game? Q/q to exit, anything else to play - "
   answer = gets.chomp.to_sym

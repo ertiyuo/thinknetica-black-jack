@@ -4,7 +4,7 @@ class Player
   ACTIONS = {
     card: 'get a card',
     pass: 'pass',
-    turn: 'turn over'
+    open: 'open cards'
   }
 
   attr_reader :name, :cards, :money
@@ -25,25 +25,33 @@ class Player
     bet
   end
 
-  def get_card(card, face_down: false)
+  def get_card(card, face_up: false)
     cards << card
 
-    puts "#{name} gets #{face_down ? card.back : card.value}"
+    puts "#{name} gets #{face_up ? card.value : card.back}"
   end
 
   def card(card)
     ACTIONS.delete :card
-    get_card(card)
+
+    get_card(card, face_up: true)
   end
 
-  def pass
+  def pass(*_args)
     ACTIONS.delete :pass
-    puts 'user passes'
+
+    puts "#{name} passes"
   end
 
-  def turn_over
+  def open(*_args)
     ACTIONS.delete :turn
-    puts 'user cards shown'
+
+    list_cards
+    list_points
+  end
+
+  def list_cards
+    cards.each { |card| puts card.value }
   end
 
   def list_points
