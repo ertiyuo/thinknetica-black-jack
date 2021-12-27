@@ -15,6 +15,10 @@ class Player
     @cards = []
   end
 
+  def list_available_actions
+    ACTIONS.each { |key, action| puts "#{key} - #{action}" }
+  end
+
   def bet(bet)
     @money -= bet
 
@@ -24,12 +28,12 @@ class Player
   def get_card(card, face_down: false)
     cards << card
 
-    face_down ? card.back : card.value
+    puts "#{name} gets #{face_down ? card.back : card.value}"
   end
 
-  def card
+  def card(card)
     ACTIONS.delete :card
-    get_card
+    get_card(card)
   end
 
   def pass
@@ -40,6 +44,10 @@ class Player
   def turn_over
     ACTIONS.delete :turn
     puts 'user cards shown'
+  end
+
+  def list_points
+    puts "#{name} has #{count_cards} points"
   end
 
   def count_cards

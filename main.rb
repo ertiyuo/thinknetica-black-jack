@@ -18,12 +18,12 @@ loop do
   puts "BANK : #{game.bank}"
   puts
 
-  puts 'You get: '
-  2.times { puts player.get_card(game.draw_card) }
-  puts 'Dealer gets: '
-  2.times { puts dealer.get_card(game.draw_card, face_down: true) }
+  # initial cards
+  2.times { player.get_card(game.draw_card) }
+  2.times { dealer.get_card(game.draw_card, face_down: true) }
   puts
 
+  # betting
   bet = 10
   game.place_a_bet(player.bet(bet))
   game.place_a_bet(dealer.bet(bet))
@@ -32,7 +32,14 @@ loop do
   puts "BANK : #{game.bank}"
   puts
 
-  puts "You have #{player.count_cards} points. What do you want to do next?"
+  player.list_points
+
+  # user action
+  puts 'What do you want to do next?'
+  player.list_available_actions
+  player.send gets.chomp.to_sym, game.draw_card
+
+  player.list_points
 
   print "\nOne more game? Q/q to exit, anything else to play - "
   answer = gets.chomp.to_sym
