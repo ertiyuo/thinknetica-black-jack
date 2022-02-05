@@ -29,6 +29,16 @@ class Player
     yield block
   end
 
+  def show_points(&block)
+    puts "#{name} has #{count_points(&block)} points"
+  end
+
+  private
+
+  def count_points(&block)
+    cards.reduce(0, &block)
+  end
+
   # def list_available_actions
   #   ACTIONS.each { |key, action| puts "#{key} - #{action}" }
   # end
