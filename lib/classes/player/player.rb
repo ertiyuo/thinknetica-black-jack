@@ -15,28 +15,38 @@ class Player
     amount
   end
 
+  def card(card)
+    cards << card
+  end
+
   def pass
     puts "#{name} passes"
   end
 
-  def card(&block)
-    puts "#{name} gets card"
-    yield block
+  def show_bank
+    puts "#{name} $#{bank}"
   end
 
-  def turn(&block)
-    puts "#{name} opens"
-    yield block
+  def show_cards(face_up: false)
+    puts "#{name} #{face_up ? open : closed}"
   end
 
-  def show_points(&block)
-    puts "#{name} has #{count_points(&block)} points"
+  def show_points(&counting_rule)
+    puts "#{name} has #{count_points(&counting_rule)} points"
   end
 
   private
 
-  def count_points(&block)
-    cards.reduce(0, &block)
+  def open
+    cards.map(&:face).join(' ')
+  end
+
+  def closed
+    cards.map(&:back).join(' ')
+  end
+
+  def count_points(&counting_rule)
+    cards.reduce(0, &counting_rule)
   end
 
   # def list_available_actions

@@ -1,10 +1,10 @@
 class Card
   BACK = "\u{1F0A0}".freeze
 
-  attr_reader :card, :suit, :number
+  attr_reader :face, :suit, :number
 
-  def initialize(card, suit, number)
-    @card = card
+  def initialize(face, suit, number)
+    @face = face
     @suit = suit
     @number = number
   end

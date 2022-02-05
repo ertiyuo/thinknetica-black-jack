@@ -28,43 +28,86 @@ class Game
 
     @player = Player.new(player_name)
     @dealer = Dealer.new
-    @deck = Deck.new.shuffle
+
+    @deck = Deck.new
   end
 
   def start
-    show_players
+    show_banks
+    shuffle_deck
+
     puts 'Start game!'
     puts
 
-    deal_cards
+    gameplay
   end
 
-  def deal_cards
-    puts 'Player gets: 1 2'
-    puts 'Dealer gets: * * '
+  def gameplay
+    first_deal
+    show_cards
 
     place_bets
-  end
+    show_banks
 
-  def place_bets
-    @bank += player.bet(BET_SIZE)
-    @bank += dealer.bet(BET_SIZE)
-    show_players
-
+    show_points(player)
     player_next
   end
 
+  def first_deal
+    2.times do
+      deal_card(player)
+      deal_card(dealer)
+    end
+  end
+
   def player_next
-    show_points(player)
     puts 'What next?'
   end
 
-  def show_players
-    puts "#{player.name} $#{player.bank}"
-    puts "#{dealer.name} $#{dealer.bank}"
+  def place_bets
+    take_bet(player)
+    take_bet(dealer)
+  end
+
+  def show_banks
+    player.show_bank
+    dealer.show_bank
+    show_bank
+    puts
+  end
+
+  def show_cards
+    player.show_cards(face_up: true)
+    dealer.show_cards
+    puts
+  end
+
+  def show_stats(player)
+    player.show_bank
+    player.show_cards(face_up: true)
+    show_points(player)
   end
 
   def show_points(player)
     player.show_points(&POINTS_COUNTING)
+  end
+
+  def shuffle_deck
+    puts 'Deck shuffling...'
+    deck.shuffle
+  end
+
+  private
+
+  def show_bank
+    puts "Bank $#{bank}"
+  end
+
+  def deal_card(player)
+    player.card(deck.next_card)
+  end
+
+  def take_bet(player)
+    @bank += player.bet(BET_SIZE)
   end
 end
