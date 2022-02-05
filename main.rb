@@ -1,6 +1,6 @@
 # frozen_string_literal: false
 
-require_relative 'lib/game'
+require_relative 'lib/classes/game'
 
 print 'What is your name? '
 username = gets.chomp
