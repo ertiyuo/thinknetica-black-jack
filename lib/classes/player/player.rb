@@ -17,6 +17,10 @@ class Player
     amount
   end
 
+  def receive(amount)
+    @bank += amount
+  end
+
   def card(card)
     cards << card
   end

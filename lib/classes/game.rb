@@ -44,6 +44,9 @@ class Game
     gameplay
   rescue GameOver
     puts 'Game is over!'
+    puts
+
+    show_banks
   end
 
   def gameplay
@@ -147,9 +150,38 @@ class Game
     player.show_cards(face_up: true)
     dealer.show_cards(face_up: true)
 
-    puts 'Winner is - '
-
+    winner = find_winner
+    pay_winner(winner)
+  rescue Draw
+    split_gain
+  ensure
     raise GameOver
+  end
+
+  def split_gain
+    puts "it's a draw!"
+
+    sum = bank / 2
+    player.receive(sum)
+    dealer.receive(sum)
+
+    @bank = 0
+  end
+
+  def pay_winner(player)
+    puts "Winner is - #{player.name}!"
+
+    player.receive(bank)
+    @bank = 0
+  end
+
+  def find_winner
+    raise Draw if dealer.points == player.points
+
+    return dealer if player.points > 21
+    return player if dealer.points > 21
+
+    (21 - player.points) < (21 - dealer.points) ? player : dealer
   end
 
   def show_bank
@@ -177,4 +209,7 @@ class Game
 end
 
 class GameOver < StandardError
+end
+
+class Draw < StandardError
 end
