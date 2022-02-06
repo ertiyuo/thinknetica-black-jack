@@ -26,31 +26,39 @@ class Game
   def initialize(player_name)
     @bank = 0
 
-    @player = Player.new(player_name)
-    @dealer = Dealer.new
+    @player = Player.new(player_name, POINTS_COUNTING)
+    @dealer = Dealer.new(POINTS_COUNTING)
 
     @deck = Deck.new
+
+    @available_actions = ACTIONS
   end
 
   def start
+    make_preparations
     show_banks
-    shuffle_deck
 
     puts 'Start game!'
     puts
 
     gameplay
+  rescue GameOver
+    puts 'Game is over!'
   end
 
   def gameplay
     first_deal
-    show_cards
-
     place_bets
-    show_banks
 
-    show_points(player)
-    player_next
+    turn_to_player
+    turn_to_dealer
+
+    open if dealer.cards.length == 3 && player.cards.length == 3
+
+    turn_to_player
+    turn_to_dealer
+
+    open
   end
 
   def first_deal
@@ -58,15 +66,55 @@ class Game
       deal_card(player)
       deal_card(dealer)
     end
-  end
 
-  def player_next
-    puts 'What next?'
+    show_cards
   end
 
   def place_bets
     take_bet(player)
     take_bet(dealer)
+
+    show_banks
+  end
+
+  def turn_to_player
+    puts 'What next?'
+    puts
+
+    show_available_actions
+    send(choose_action)
+  end
+
+  def turn_to_dealer
+    if dealer.points < 17 && dealer.cards.length < 3
+      puts "#{dealer.name} gets card"
+      deal_card(dealer)
+    else
+      dealer.pass
+    end
+
+    puts
+  end
+
+  def show_available_actions
+    @available_actions.each { |key, action| puts "#{key} - #{action}" }
+    puts
+  end
+
+  def choose_action
+    action = gets.chomp.to_sym
+    @available_actions.delete action
+    puts
+
+    action
+  end
+
+  def deal_card(player)
+    player.card(deck.next_card)
+  end
+
+  def take_bet(player)
+    @bank += player.bet(BET_SIZE)
   end
 
   def show_banks
@@ -82,32 +130,51 @@ class Game
     puts
   end
 
-  def show_stats(player)
-    player.show_bank
-    player.show_cards(face_up: true)
-    show_points(player)
-  end
-
-  def show_points(player)
-    player.show_points(&POINTS_COUNTING)
-  end
-
-  def shuffle_deck
-    puts 'Deck shuffling...'
-    deck.shuffle
-  end
-
   private
+
+  def card
+    deal_card(player)
+    player.show_cards(face_up: true)
+    puts
+  end
+
+  def pass
+    player.pass
+    puts
+  end
+
+  def open
+    player.show_cards(face_up: true)
+    dealer.show_cards(face_up: true)
+
+    puts 'Winner is - '
+
+    raise GameOver
+  end
 
   def show_bank
     puts "Bank $#{bank}"
   end
 
-  def deal_card(player)
-    player.card(deck.next_card)
+  def make_preparations
+    init_actions
+    empty_players_cards
+    shuffle_deck
   end
 
-  def take_bet(player)
-    @bank += player.bet(BET_SIZE)
+  def empty_players_cards
+    player.empty_cards
+    dealer.empty_cards
   end
+
+  def init_actions
+    @available_actions = ACTIONS.clone
+  end
+
+  def shuffle_deck
+    deck.shuffle
+  end
+end
+
+class GameOver < StandardError
 end

@@ -1,10 +1,5 @@
 class Dealer < Player
-  def initialize
-    super('Dealer')
-  end
-
-  def choose_action(game)
-    puts "#{name} is thinking"
-    count_cards < 17 ? get_card(game.draw_card) : pass
+  def initialize(points_counting_rule)
+    super('Dealer', points_counting_rule)
   end
 end

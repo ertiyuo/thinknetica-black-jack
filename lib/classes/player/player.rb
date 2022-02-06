@@ -3,10 +3,12 @@
 class Player
   attr_reader :name, :cards, :bank
 
-  def initialize(name)
+  def initialize(name, points_counting_rule)
     @name = name
     @bank = 100
     @cards = []
+
+    @points_counting_rule = points_counting_rule
   end
 
   def bet(amount)
@@ -19,8 +21,16 @@ class Player
     cards << card
   end
 
+  def empty_cards
+    @cards = []
+  end
+
   def pass
     puts "#{name} passes"
+  end
+
+  def points
+    count_points
   end
 
   def show_bank
@@ -28,71 +38,24 @@ class Player
   end
 
   def show_cards(face_up: false)
-    puts "#{name} #{face_up ? open : closed}"
+    puts(face_up ? "#{name} #{cards_face_up} - #{points} points" : "#{name} #{cards_back_up}")
   end
 
-  def show_points(&counting_rule)
-    puts "#{name} has #{count_points(&counting_rule)} points"
+  def show_points
+    puts "#{name} has #{count_points} points"
   end
 
   private
 
-  def open
+  def cards_face_up
     cards.map(&:face).join(' ')
   end
 
-  def closed
+  def cards_back_up
     cards.map(&:back).join(' ')
   end
 
-  def count_points(&counting_rule)
-    cards.reduce(0, &counting_rule)
+  def count_points
+    cards.reduce(0, &@points_counting_rule)
   end
-
-  # def list_available_actions
-  #   ACTIONS.each { |key, action| puts "#{key} - #{action}" }
-  # end
-
-  # def bet(bet)
-  #   @bank -= bet
-
-  #   bet
-  # end
-
-  # def get_card(card, face_up: false)
-  #   cards << card
-
-  #   puts "#{name} gets #{face_up ? card.value : card.back}"
-  # end
-
-  # def card(card)
-  #   ACTIONS.delete :card
-
-  #   get_card(card, face_up: true)
-  # end
-
-  # def pass(*_args)
-  #   ACTIONS.delete :pass
-
-  #   puts "#{name} passes"
-  # end
-
-  # def open(*_args)
-  #   ACTIONS.delete :turn
-
-  #   list_cards
-  #   list_points
-  # end
-
-  # def list_cards
-  #   cards.each { |card| puts card.value }
-  # end
-
-  # def list_points
-  #   puts "#{name} has #{count_cards} points"
-  # end
-
-  # def count_cards
-  #   cards.sum(&:points)
-  # end
 end

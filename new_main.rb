@@ -5,8 +5,9 @@ username = gets.chomp
 puts "Welcome to Black Jack, #{username}!"
 puts
 
+game = Game.new(username)
+
 loop do
-  game = Game.new(username)
   game.start
 
   print "\nOne more game? Q/q to exit, anything else to play - "
