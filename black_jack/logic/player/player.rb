@@ -25,24 +25,16 @@ class Player
     hand.add(card)
   end
 
-  def pass
-    puts "#{name} passes"
-  end
-
   def points
     hand.count_points
   end
 
-  def show_bank
-    puts "#{name} $#{bank}"
+  def open
+    hand.face_up
   end
 
-  def show_cards(face_up: false)
-    puts(face_up ? "#{name} #{hand.face_up} - #{points} points" : "#{name} #{hand.back_up}")
-  end
-
-  def show_points
-    puts "#{name} has #{points} points"
+  def closed
+    hand.back_up
   end
 
   def empty_cards

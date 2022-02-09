@@ -1,4 +1,4 @@
-require_relative 'lib/classes/game'
+require_relative 'black_jack/game'
 
 print 'Hello, what is your name? '
 username = gets.chomp
@@ -10,7 +10,7 @@ game = Game.new(username)
 loop do
   game.start
 
-  print "\nOne more game? Q/q to exit, anything else to play - "
+  print 'One more game? Q/q to exit, anything else to play - '
   answer = gets.chomp.to_sym
 
   if %i[q Q].include?(answer)
@@ -18,6 +18,5 @@ loop do
     break
   end
 
-  puts 'New game!'
-  puts
+  print "New game!\n\n"
 end

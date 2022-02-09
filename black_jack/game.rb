@@ -1,6 +1,7 @@
-require_relative 'deck/deck'
-require_relative 'player/player'
-require_relative 'player/dealer'
+require_relative 'interface/interface'
+require_relative 'logic/deck_of_cards/deck'
+require_relative 'logic/player/player'
+require_relative 'logic/dealer/dealer'
 
 class Game
   POINTS_COUNTING = lambda do |sum, card|
@@ -21,32 +22,32 @@ class Game
 
   BET_SIZE = 10
 
-  attr_reader :deck, :bank, :player, :dealer
+  attr_reader :interface, :deck, :bank, :player, :dealer
 
   def initialize(player_name)
     @bank = 0
 
-    @player = Player.new(player_name, POINTS_COUNTING)
-    @dealer = Dealer.new(POINTS_COUNTING)
+    @interface = Interface.new
 
     @deck = Deck.new
+
+    @player = Player.new(player_name, POINTS_COUNTING)
+    @dealer = Dealer.new(POINTS_COUNTING)
 
     @available_actions = ACTIONS
   end
 
   def start
     make_preparations
-    show_banks
+    stats
 
-    puts 'Start game!'
-    puts
+    interface.start
 
     gameplay
   rescue GameOver
-    puts 'Game is over!'
-    puts
+    stats
 
-    show_banks
+    interface.game_over
   end
 
   def gameplay
@@ -70,46 +71,33 @@ class Game
       deal_card(dealer)
     end
 
-    show_cards
+    interface.show_cards_points(player.name, player.open, player.points)
+    interface.show_cards(dealer.name, dealer.closed, separate: true)
   end
 
   def place_bets
     take_bet(player)
     take_bet(dealer)
 
-    show_banks
+    stats
   end
 
   def turn_to_player
-    puts 'What next?'
-    puts
+    interface.next_step
+    interface.list_available_actions(@available_actions)
+    action = interface.select_action
 
-    show_available_actions
-    send(choose_action)
+    @available_actions.delete action
+    send(action)
   end
 
   def turn_to_dealer
     if dealer.should_hit?
-      puts "#{dealer.name} gets card"
+      interface.player_gets_card(dealer.name)
       deal_card(dealer)
     else
-      dealer.pass
+      interface.player_passes(dealer.name)
     end
-
-    puts
-  end
-
-  def show_available_actions
-    @available_actions.each { |key, action| puts "#{key} - #{action}" }
-    puts
-  end
-
-  def choose_action
-    action = gets.chomp.to_sym
-    @available_actions.delete action
-    puts
-
-    action
   end
 
   def deal_card(player)
@@ -120,47 +108,40 @@ class Game
     @bank += player.bet(BET_SIZE)
   end
 
-  def show_banks
-    player.show_bank
-    dealer.show_bank
-    show_bank
-    puts
-  end
-
-  def show_cards
-    player.show_cards(face_up: true)
-    dealer.show_cards
-    puts
-  end
-
   private
 
   def card
     deal_card(player)
-    player.show_cards(face_up: true)
-    puts
+    interface.show_cards_points(player.name, player.open, player.points, separate: true)
   end
 
   def pass
-    player.pass
-    puts
+    interface.player_passes(player.name)
   end
 
   def open
-    player.show_cards(face_up: true)
-    dealer.show_cards(face_up: true)
+    interface.show_cards_points(player.name, player.open, player.points)
+    interface.show_cards_points(dealer.name, dealer.open, dealer.points, separate: true)
 
-    winner = find_winner
-    pay_winner(winner)
+    finish
   rescue Draw
-    split_gain
+    finish_draw
   ensure
     raise GameOver
   end
 
-  def split_gain
-    puts "it's a draw!"
+  def finish
+    winner = find_winner
+    interface.announce_winner(winner.name)
+    pay_winner(winner)
+  end
 
+  def finish_draw
+    interface.announce_draw
+    split_gain
+  end
+
+  def split_gain
     sum = bank / 2
     player.win(sum)
     dealer.win(sum)
@@ -169,8 +150,6 @@ class Game
   end
 
   def pay_winner(player)
-    puts "Winner is - #{player.name}!"
-
     player.win(bank)
     @bank = 0
   end
@@ -184,8 +163,10 @@ class Game
     (21 - player.points) < (21 - dealer.points) ? player : dealer
   end
 
-  def show_bank
-    puts "Bank $#{bank}"
+  def stats
+    interface.show_bank(player.name, player.bank)
+    interface.show_bank(dealer.name, dealer.bank)
+    interface.show_bank('bank', bank, separate: true)
   end
 
   def make_preparations
