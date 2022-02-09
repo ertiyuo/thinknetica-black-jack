@@ -1,14 +1,14 @@
 # frozen_string_literal: false
 
+require_relative 'hand'
+
 class Player
-  attr_reader :name, :cards, :bank
+  attr_reader :name, :hand, :bank
 
   def initialize(name, points_counting_rule)
     @name = name
     @bank = 100
-    @cards = []
-
-    @points_counting_rule = points_counting_rule
+    @hand = Hand.new(points_counting_rule)
   end
 
   def bet(amount)
@@ -17,16 +17,12 @@ class Player
     amount
   end
 
-  def receive(amount)
+  def win(amount)
     @bank += amount
   end
 
   def card(card)
-    cards << card
-  end
-
-  def empty_cards
-    @cards = []
+    hand.add(card)
   end
 
   def pass
@@ -34,7 +30,7 @@ class Player
   end
 
   def points
-    count_points
+    hand.count_points
   end
 
   def show_bank
@@ -42,24 +38,18 @@ class Player
   end
 
   def show_cards(face_up: false)
-    puts(face_up ? "#{name} #{cards_face_up} - #{points} points" : "#{name} #{cards_back_up}")
+    puts(face_up ? "#{name} #{hand.face_up} - #{points} points" : "#{name} #{hand.back_up}")
   end
 
   def show_points
-    puts "#{name} has #{count_points} points"
+    puts "#{name} has #{points} points"
   end
 
-  private
-
-  def cards_face_up
-    cards.map(&:face).join(' ')
+  def empty_cards
+    hand.empty
   end
 
-  def cards_back_up
-    cards.map(&:back).join(' ')
-  end
-
-  def count_points
-    cards.reduce(0, &@points_counting_rule)
+  def full?
+    hand.full?
   end
 end

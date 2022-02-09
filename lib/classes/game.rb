@@ -56,7 +56,7 @@ class Game
     turn_to_player
     turn_to_dealer
 
-    open if dealer.cards.length == 3 && player.cards.length == 3
+    open if dealer.full? && player.full?
 
     turn_to_player
     turn_to_dealer
@@ -89,7 +89,7 @@ class Game
   end
 
   def turn_to_dealer
-    if dealer.points < 17 && dealer.cards.length < 3
+    if dealer.should_hit?
       puts "#{dealer.name} gets card"
       deal_card(dealer)
     else
@@ -162,8 +162,8 @@ class Game
     puts "it's a draw!"
 
     sum = bank / 2
-    player.receive(sum)
-    dealer.receive(sum)
+    player.win(sum)
+    dealer.win(sum)
 
     @bank = 0
   end
@@ -171,7 +171,7 @@ class Game
   def pay_winner(player)
     puts "Winner is - #{player.name}!"
 
-    player.receive(bank)
+    player.win(bank)
     @bank = 0
   end
 
